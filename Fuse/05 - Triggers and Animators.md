@@ -466,42 +466,57 @@ The `LoadUrl` action lets you tell a given WebView to navigate to a location.
 
 > ### $(EvaluateJS)
 
-The `EvaluateJS` action allows you to execute arbitrary JavaScript in the context of a @(WebView)'s currently loaded content and extract a return value as JSON to be passed into a FuseJS JavaScript handler.
+The WebView offers limited execution of arbitrary JavaScript in the currently loaded web environment. This is done with the `<EvaluateJS/>` action. Let's look at a simplified example.
 
+```XML
+<EvaluateJS Handler="{onPageLoaded}">
+	var result = {
+		url : document.location.href
+	};
+	return result;
+</EvaluateJS>
 ```
-<App Theme="Native" Background="#333">
-	<JavaScript>
-		module.exports = {
-			onPageLoaded : function(res) 
-			{
-				// The return value is acquired with the 'json' property of the 
-				// argument object and will usually be parsed to be read.
-				console.log("WebView arrived at "+ JSON.parse(res.json).url);
-			}
-		};
-	</JavaScript>
-	<DockPanel>
-		<StatusBarBackground Dock="Top"/>
-		
-		<WebView Dock="Fill" Url="http://www.google.com">
-			<PageLoaded>
-				<EvaluateJS Handler="{onPageLoaded}">
-					// All return values are automatically JSON.stringified before 
-					// being passed through to Fuse as a bridge. 
-					// For this reason it's generally cleaner to return a structure.
-					var result = {
-						url : document.location.href
-					};
-					//Note that returning a value is optional
-					return result; 
-				</EvaluateJS>
-			</PageLoaded>
-		</WebView>
-	
-		<BottomBarBackground Dock="Bottom" />
-	</DockPanel>
-</App> 
+
+Note the use of a `return` statement in the script body. Implementations of JavaScript evaluation APIs generally act like a JavaScript [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop), and when evaluating multiple lines of JS the result of the last statement of the script becomes the returned value. For instance, "1+5" is completely valid JS when evaluated and returns the expected value of "6".
+
+This can result in odd-feeling JS, where referencing an object becomes an implicit return statement, whereas an explicit return is not allowed.
+
+```JavaScript
+var result = {};
+result.foo = "bar";
+result; // using return here is invalid JS
 ```
+
+To make this feel better and allow return, we currently inject the user's JS in the form of a function:
+
+```JavaScript
+(USER_JS)();
+```
+
+### Reading the result value
+
+When we evaluate the JavaScript we are currently bound by platform restrictions in a key way: String is the only allowed return value type on Android, our lowest common denominator. Android allows for parity with iOS as of API level 19, which denies us good backwards compatibility. For now we must rely on the comparatively ancient [addJavaScriptInterface](http://developer.android.com/reference/android/webkit/WebView.html#addJavascriptInterface(java.lang.Object, java.lang.String)) API for backwards compatibility. 
+
+What this means is that any return value passed from the evaluated script must by necessity be returned as JSON and parsed back from it on the Fuse end. Even if all you want is the result of some arithmetic, you'd still receive it as a string and require a cast. Instead of forcing you to routinely `return JSON.stringify(foo)` from your own JS we handle this by *always* wrapping your JS in JSON.stringify before evaluation:
+
+```JavaScript
+JSON.stringify( (USER_JS)(); );
+```
+
+The returned JSON string here is then put into a result object with the `json` key. This is for clarity, so you never forget that the data you are receiving is a JSON string that you will need to parse.
+
+```XML
+<JavaScript>
+	module.exports = {
+		onPageLoaded : function(result) 
+		{
+			var url = JSON.parse(result.json).url;
+		}
+	};
+</JavaScript>
+``` 
+
+Note that of course return is optional. If you don't return anything from your evaluated JS the return value of the expression will simply be "null".
 
 ## $(State groups)
 
