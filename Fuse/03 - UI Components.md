@@ -781,7 +781,7 @@ As with the @(NativeViewHost) note that depth ordering will behave differently w
 
 To include web content Fuse offers a native WebView component for Android and iOS. The WebView is native only, and as such needs to be contained in a @(NativeViewHost) if you wish to use it with Graphics themes.
 
-The WebView can be used to present web content over the http protocol, and hooks into some useful triggers for building a customized browsing experience, such as @(PageBeginLoading), @(WhilePageLoading) and @(PageLoaded). Navigation triggers like @(GoBack) and @(GoForward) are complimented with WebView-specific ones, like @(Reload) and @(LoadUrl). It can also be used to feed a @(ProgressAnimation).
+The WebView can be used to present web content over the http protocol, and hooks into some useful triggers for building a customized browsing experience, such as @(PageBeginLoading), @(WhilePageLoading) and @(PageLoaded). Navigation triggers like @(GoBack) and @(GoForward) are complemented with WebView-specific ones, like @(Reload) and @(LoadUrl). It can also be used to feed a @(ProgressAnimation).
 
 Of particular notice is the @(EvaluateJS) trigger, which allows arbitrary JavaScript to be run in the WebView's context and the resulting data be fed back into Fuse:
 

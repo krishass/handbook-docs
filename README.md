@@ -15,7 +15,7 @@ You can view the rendered version [here](https://www.fusetools.com/learn/fuse).
 
 # How to contribute
 
-The handbook is written in Markdown. We have added a couple custom extensions to easily link to topics across the entire handbook. The [extensions guide](Markdown%20Extensions.md) for details.
+The handbook is written in Markdown. We have added a couple custom extensions to easily link to topics across the entire handbook. See the [extensions guide](Markdown%20Extensions.md) for details.
 
 - We track bugs and issues using [github issues](https://github.com/fusetools/handbook-docs/issues).
 - Take a look at the [writers guide](Writer's%20Guidelines.md).

@@ -1,6 +1,6 @@
 # Handbook markdown extensions
 
-The markdown extensions allows us to easily link to concepts accross the whole handbook.
+The markdown extensions allows us to easily link to concepts across the whole handbook.
 There are two special directives which are used to create link targets and links.
 
 **$(Foo)** defines where Foo is documented. Any links to Foo will point here.
