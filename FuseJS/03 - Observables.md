@@ -127,6 +127,12 @@ Returns true if successful, and false otherwise.
 		Console.Log("success");
 	}
 
+#### $(removeAt:removeAt(index))
+Remove the value at the given `index`.
+
+	var shapes = Observable('Round', 'Square', 'Rectangular');
+	shapes.removeAt(2);
+
 #### $(removeWhere:removeWhere(func))
 Removes all values for which `func` is true.
 
